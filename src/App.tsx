@@ -1,92 +1,67 @@
-import React, { useState } from "react";
+import { useState, useEffect } from 'react'
+import './App.css'
+import 'daisyui/dist/full.css'
+import backgroundImage from '../public/images/fon.jpeg'
 
-const App: React.FC = () => {
-  const [city, setCity] = useState<string>("");
-  const [weather, setWeather] = useState<any>(null);
-  const [error, setError] = useState<string>("");
+interface WeatherData {
+  name: string
+  main: {
+    temp: number
+  }
+  weather: Array<{
+    description: string
+  }>
+}
 
-  const fetchWeather = async () => {
-    try {
-      setError("");
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=YOUR_API_KEY`
-      );
-      if (!response.ok) {
-        throw new Error("Joy nomi noto'g'ri yoki ma'lumot topilmadi!");
+function App() {
+  const [weather, setWeather] = useState<WeatherData | null>(null)
+  const [city, setCity] = useState<string>('Tashkent')
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d0243b5f32e492f41aaa7f8c7a3a0607&units=metric`)
+        
+        if (!response.ok) {
+          throw new Error('Xatolik kelyapti shahar nomini kiriting!')
+        }
+
+        const data: WeatherData = await response.json()
+        setWeather(data)
+        setError(null)
+      } catch (err) {
+        setWeather(null)
+        setError((err as Error).message)
       }
-      const data = await response.json();
-      setWeather(data);
-    } catch (err: any) {
-      setWeather(null);
-      setError(err.message);
     }
-  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (city.trim() === "") {
-      setError("Iltimos, joy nomini kiriting!");
-      return;
-    }
-    fetchWeather();
-  };
+    fetchWeather()
+  }, [city])
 
   return (
-    <div className="min-h-screen bg-blue-100 flex items-center justify-center">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold text-center text-blue-700 mb-4">
-          Ob-Havo Ma'lumotlari
-        </h1>
-        <form onSubmit={handleSubmit} className="flex mb-4">
-          <input
-            type="text"
-            className="flex-1 p-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Joy nomini kiriting..."
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="px-4 bg-blue-500 text-white rounded-r hover:bg-blue-600 focus:outline-none"
-          >
-            Qidirish
-          </button>
-        </form>
-        {error && (
-          <div className="text-red-500 text-center mb-4">{error}</div>
-        )}
-        {weather && (
-          <div className="text-center">
-            <h2 className="text-xl font-bold text-blue-600">
-              {weather.name}, {weather.sys.country}
-            </h2>
-            <p className="text-4xl font-bold text-gray-800">
-              {Math.round(weather.main.temp)}°C
-            </p>
-            <p className="text-gray-600">{weather.weather[0].description}</p>
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <div className="p-2 bg-blue-50 rounded">
-                <p className="text-sm text-gray-500">Namlik</p>
-                <p className="font-bold">{weather.main.humidity}%</p>
-              </div>
-              <div className="p-2 bg-blue-50 rounded">
-                <p className="text-sm text-gray-500">Shamol tezligi</p>
-                <p className="font-bold">{weather.wind.speed} m/s</p>
-              </div>
-              <div className="p-2 bg-blue-50 rounded">
-                <p className="text-sm text-gray-500">Maksimal Temp</p>
-                <p className="font-bold">{Math.round(weather.main.temp_max)}°C</p>
-              </div>
-              <div className="p-2 bg-blue-50 rounded">
-                <p className="text-sm text-gray-500">Minimal Temp</p>
-                <p className="font-bold">{Math.round(weather.main.temp_min)}°C</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+    <div 
+      className="flex flex-col items-center justify-center min-h-screen bg-blue-100 border-black" 
+      style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+    >
+      <h1 className="text-4xl font-bold mb-6 text-center text-white">Ob-havo malumotlar!</h1>
+      <input 
+        type="text" 
+        value={city} 
+        onChange={(e) => setCity(e.target.value)} 
+        placeholder="Shahar nomini kiriting" 
+        className="input input-bordered w-80 mb-4 focus:outline-none focus:ring focus:ring-blue-500"
+      />
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {weather && (
+        <div className="card bg-white shadow-lg rounded-lg p-6 w-80 text-center">
+          <h2 className="text-3xl font-semibold">{weather.name}</h2>
+          <p className="text-xl">Harorat: {weather.main.temp} °C</p>
+          <p className="text-lg">Havo: {weather.weather[0].description}</p>
+        </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
