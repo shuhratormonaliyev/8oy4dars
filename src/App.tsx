@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import './App.css'
+// import './App.css'
 import 'daisyui/dist/full.css'
 import backgroundImage from '../public/images/fon.jpeg'
 
@@ -15,7 +15,7 @@ interface WeatherData {
 
 function App() {
   const [weather, setWeather] = useState<WeatherData | null>(null)
-  const [city, setCity] = useState<string>('Tashkent')
+  const [city, setCity] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -41,10 +41,10 @@ function App() {
 
   return (
     <div 
-      className="flex flex-col items-center justify-center min-h-screen bg-blue-100 border-black" 
+      className="flex flex-col items-center justify-center min-h-screen bg-blue-100" 
       style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
-      <h1 className="text-4xl font-bold mb-6 text-center text-white">Ob-havo malumotlar!</h1>
+      <h1 className="text-4xl font-bold mb-6 text-center text-white">Havo ma'lumotlari</h1>
       <input 
         type="text" 
         value={city} 
@@ -56,7 +56,7 @@ function App() {
       {weather && (
         <div className="card bg-white shadow-lg rounded-lg p-6 w-80 text-center">
           <h2 className="text-3xl font-semibold">{weather.name}</h2>
-          <p className="text-xl">Harorat: {weather.main.temp} °C</p>
+          <p className="text-xl">Harorat: {weather.main.temp.toFixed(2)} °C</p>
           <p className="text-lg">Havo: {weather.weather[0].description}</p>
         </div>
       )}
