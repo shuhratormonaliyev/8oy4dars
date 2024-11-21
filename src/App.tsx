@@ -44,7 +44,7 @@ function App() {
       className="flex flex-col items-center justify-center min-h-screen bg-blue-100" 
       style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
-      <h1 className="text-4xl font-bold mb-6 text-center text-white">Havo ma'lumotlari</h1>
+      <h1 className="text-4xl font-bold mb-6 text-center text-white">Ob-Havo ma'lumotlari</h1>
       <input 
         type="text" 
         value={city} 
